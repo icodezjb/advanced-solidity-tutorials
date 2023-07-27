@@ -87,6 +87,34 @@ In this section, we provide an outline for developers to build an Arbitrary Mess
 5. Build an AMT bridge by deploying two `Anchor` contracts to two chains respectively ([link here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/build-a-bridge)).
 6. You should see your newly created AMT bridge under the `Dashboard/Bridge` tab ([link here](https://boolscan.com/dashboard/bridge?network=testnet)). An example is given as follows: 
 
+```bash
+export TESTNET_DEPLOYER_PRIVATE_KEY=""
+export TESTNET_DEPLOYER_ADDRESS="0xcAF084133CBdBE27490d3afB0Da220a40C32E307"
+export MAINNET_DEPLOYER_PRIVATE_KEY=""
+export MAINNET_DEPLOYER_ADDRESS="0xcAF084133CBdBE27490d3afB0Da220a40C32E307"
+
+export opa="0xc571bf7eafead15e40df1fe7342fbb1194e9b7c3"
+export aba="0x83ad64203d505a065c4f98a5f708319087bcdcac"
+
+yarn hardhat compile --network arbitrum_goerli
+yarn hardhat deployMessageBridge --anchor $aba --network arbitrum_goerli
+yarn hardhat deployMessageBridge --anchor $opa --network optimism_goerli
+
+export opc="0x22bC019d2F7f8D2D3Ea4aa4EfDD109D797A77Ec5"
+export abc="0x044AAeC1cf19d64e821208d1b862439775069370"
+export ropa="0x000000000000000000000000c571bf7eafead15e40df1fe7342fbb1194e9b7c3"
+export raba="0x00000000000000000000000083ad64203d505a065c4f98a5f708319087bcdcac"
+
+yarn hardhat updateConsumer --anchor $aba --consumer $abc --network arbitrum_goerli
+yarn hardhat updateConsumer --anchor $opa --consumer $opc --network optimism_goerli
+yarn hardhat updateRemoteAnchor --anchor $aba --id 420 --remoteanchor $ropa --network arbitrum_goerli
+yarn hardhat updateRemoteAnchor --anchor $opa --id 421613 --remoteanchor $raba --network optimism_goerli
+
+yarn hardhat messageBridgeSend  --bridge $abc --id 420 --massage "hello" --network arbitrum_goerli
+yarn hardhat messageBridgeSend  --bridge $opc --id 421613 --message "good" --network optimism_goerli
+
+```
+
 <div align="center">
     <img alt="AMTBridgeInstance" src="images/AMTBridgeInstance.png"/>
 </div>

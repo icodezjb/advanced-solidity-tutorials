@@ -25,6 +25,13 @@ task(
     .addParam("name", "Name of the token")
     .addParam("symbol", "Symbol of the token")
 
+task(
+    "deployMessageBridge",
+    "Deploy a new MessageBridge contract",
+    require("./message-bridge/deployMessageBridge")
+)
+    .addParam("anchor", "Address of Anchor")
+
 task("updateConsumer", "Update the consumer of Anchor", require("./anchor/updateConsumer"))
     .addParam("anchor", "Address of Anchor")
     .addParam("consumer", "Address of Consumer")
@@ -33,3 +40,12 @@ task("tokenBridgeDeposit", "Deposit and ", require("./token-bridge/tokenBridgeDe
     .addParam("bridge", "Address of TokenBridge")
     .addParam("id", "Chain ID of the remote path")
     .addParam("amount", "Amount of tokens to deposit")
+
+task(
+    "messageBridgeSend",
+    "Send message ",
+    require("./message-bridge/messageBridgeSend")
+)
+    .addParam("bridge", "Address of TokenBridge")
+    .addParam("id", "Chain ID of the remote path")
+    .addParam("message", "message to send")
