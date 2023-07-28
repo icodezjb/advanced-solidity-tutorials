@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {IMessengerFee} from "../bool/interfaces/IMessengerFee.sol";
@@ -9,11 +8,10 @@ import {IAnchor} from "../bool/interfaces/IAnchor.sol";
 import {BoolConsumerBase} from "../bool/BoolConsumerBase.sol";
 
 
-contract MessageBridge is BoolConsumerBase {
+contract MessageBridge is Ownable, BoolConsumerBase {
     event SentMsg(bytes32 id, bytes msg);
     event ReceiveMsg(bytes32 id, bytes msg);
-    event SoTransferFailed(string revertReason);
-
+    event SoTransferFailed(bytes returnData);
 
     constructor(address _anchor) BoolConsumerBase(_anchor) {}
 
@@ -68,7 +66,7 @@ contract MessageBridge is BoolConsumerBase {
         bytes memory extraFeed,
         uint32 dstChainId,
         bytes memory payload
-    ) internal override  returns (bytes32 txUniqueIdentification) {
+    ) internal override returns (bytes32 txUniqueIdentification) {
         try IAnchor(_anchor).sendToMessenger{value: callValue}(
             refundAddress,
             crossType,
@@ -78,7 +76,8 @@ contract MessageBridge is BoolConsumerBase {
         ) returns(bytes32 id) {
             txUniqueIdentification = id;
         } catch (bytes memory returnData) {
-            emit SoTransferFailed(getRevertMsg(returnData));
+            emit SoTransferFailed(returnData);
+
             txUniqueIdentification = bytes32(0);
         }
     }
